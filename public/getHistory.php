@@ -41,15 +41,15 @@ function ciniki_links_getHistory($ciniki) {
 	}
 
 	if( $args['field'] == 'start_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links','date');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links','date');
 	}
 	if( $args['field'] == 'end_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links','date');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links','date');
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLog.php');
-	return ciniki_core_dbGetChangeLog($ciniki, $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 'ciniki_links', $args['link_id'], $args['field'], 'links');
 }
 ?>

@@ -46,7 +46,7 @@ function ciniki_links_add($ciniki) {
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionRollback.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'links');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -88,8 +88,8 @@ function ciniki_links_add($ciniki) {
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'links', $args['business_id'], 
-				'ciniki_links', $link_id, $field, $args[$field]);
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 
+				1, 'ciniki_links', $link_id, $field, $args[$field]);
 		}
 	}
 

@@ -45,7 +45,7 @@ function ciniki_links_delete($ciniki) {
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionRollback.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbDelete.php');
-	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'links');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -69,7 +69,8 @@ function ciniki_links_delete($ciniki) {
 	}
 
 	// FIXME: Add code to track deletions
-	ciniki_core_dbAddChangeLog($ciniki, 'links', $args['business_id'], 'ciniki_links', $args['link_id'], 'delete', '');
+	ciniki_core_dbAddModuleHistory($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 
+		3, 'ciniki_links', $args['link_id'], '*', '');
 
 	//
 	// Commit the transaction
