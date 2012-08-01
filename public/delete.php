@@ -46,7 +46,7 @@ function ciniki_links_delete($ciniki) {
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbDelete.php');
 	require($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'links');
+	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.links');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
 	}   
@@ -57,28 +57,35 @@ function ciniki_links_delete($ciniki) {
 	$strsql = "DELETE FROM ciniki_links "
 		. "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
 		. "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
-	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'links');
+	$rc = ciniki_core_dbDelete($ciniki, $strsql, 'ciniki.links');
 	if( $rc['stat'] != 'ok' ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'links');
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.links');
 		return $rc;
 	}
 
 	if( $rc['num_affected_rows'] == 0 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'links');
+		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.links');
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'634', 'msg'=>'Unable to remove link'));
 	}
 
 	// FIXME: Add code to track deletions
-	ciniki_core_dbAddModuleHistory($ciniki, 'links', 'ciniki_link_history', $args['business_id'], 
+	ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.links', 'ciniki_link_history', $args['business_id'], 
 		3, 'ciniki_links', $args['link_id'], '*', '');
 
 	//
 	// Commit the transaction
 	//
-	$rc = ciniki_core_dbTransactionCommit($ciniki, 'links');
+	$rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.links');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
+
+	//
+	// Update the last_change date in the business modules
+	// Ignore the result, as we don't want to stop user updates if this fails.
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
+	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'links');
 
 	return array('stat'=>'ok');
 }

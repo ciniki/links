@@ -47,7 +47,7 @@ function ciniki_links_get($ciniki) {
 		. "";
 	
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'links', 'link');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.links', 'link');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

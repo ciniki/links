@@ -26,7 +26,7 @@ function ciniki_links_web_list($ciniki, $business_id) {
 
 	
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
-	return ciniki_core_dbHashQueryTree($ciniki, $strsql, 'links', array(
+	return ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
 		array('container'=>'categories', 'fname'=>'cname', 'name'=>'category',
 			'fields'=>array('cname')),
 		array('container'=>'links', 'fname'=>'name', 'name'=>'link',

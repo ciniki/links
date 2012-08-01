@@ -48,7 +48,7 @@ function ciniki_links_list($ciniki) {
 		. "ORDER BY sname "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'links', array(
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
 		array('container'=>'sections', 'fname'=>'sname', 'name'=>'section',
 			'fields'=>array('sname')),
 		array('container'=>'links', 'fname'=>'id', 'name'=>'link',

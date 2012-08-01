@@ -65,7 +65,7 @@ function ciniki_links_searchField($ciniki) {
 		$strsql .= "LIMIT 25 ";
 	}
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'links', array(
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
 		array('container'=>'results', 'fname'=>'name', 'name'=>'result', 'fields'=>array('name')),
 		));
 	if( $rc['stat'] != 'ok' ) {
