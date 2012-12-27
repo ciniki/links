@@ -21,7 +21,7 @@ function ciniki_links_list($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		));
@@ -33,14 +33,12 @@ function ciniki_links_list($ciniki) {
     //  
     // Check access to business_id as owner, or sys admin. 
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/links/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
     $ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.list');
     if( $ac['stat'] != 'ok' ) { 
         return $ac;
     }   
 
-	//require_once($ciniki['config']['core']['modules_dir'] . '/users/private/datetimeFormat.php');
-	//$date_format = ciniki_users_datetimeFormat($ciniki);
 	$strsql = "SELECT id, name, "
 		. "IF(ciniki_links.category='', 'Uncategorized', ciniki_links.category) AS sname, "
 		. "url, description FROM ciniki_links "

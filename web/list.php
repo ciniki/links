@@ -23,9 +23,8 @@ function ciniki_links_web_list($ciniki, $business_id) {
 		. "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "ORDER BY category, name ASC "
 		. "";
-
 	
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	return ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
 		array('container'=>'categories', 'fname'=>'cname', 'name'=>'category',
 			'fields'=>array('cname')),

@@ -20,11 +20,11 @@ function ciniki_links_getHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'link_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No item specified'), 
-		'field'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No field specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'List'), 
+		'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -34,13 +34,13 @@ function ciniki_links_getHistory($ciniki) {
 	//
 	// Check access to business_id as owner, or sys admin
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/links/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
 	$rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.getHistory');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
 	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.links', 'ciniki_link_history', $args['business_id'], 'ciniki_links', $args['link_id'], $args['field']);
 }
 ?>

@@ -16,7 +16,7 @@ function ciniki_links_searchField($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'field'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No field specified'),
@@ -32,7 +32,7 @@ function ciniki_links_searchField($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/links/private/checkAccess.php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
     $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.searchField', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
