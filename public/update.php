@@ -12,18 +12,18 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_links_update($ciniki) {
+function ciniki_links_update(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'link_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No ID specified'), 
-		'name'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No name specified'), 
-		'category'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No category specified'), 
-		'url'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No url specified'), 
-		'description'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No description specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Link'), 
+		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
+		'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'), 
+		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
+		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -101,6 +101,9 @@ function ciniki_links_update($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'links');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.links.link',
+		'args'=>array('id'=>$args['link_id']));
 
 	return array('stat'=>'ok');
 }

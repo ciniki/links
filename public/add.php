@@ -13,17 +13,17 @@
 // -------
 // <rsp stat="ok">
 //
-function ciniki_links_add($ciniki) {
+function ciniki_links_add(&$ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'name'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No name specified'), 
-		'category'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No name specified'), 
-		'url'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No url specified'), 
-		'description'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No description specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
+		'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'), 
+		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
+		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -38,6 +38,16 @@ function ciniki_links_add($ciniki) {
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}
+
+	//
+	// Get a new UUID
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.links');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$args['uuid'] = $rc['uuid'];
 
 	//
 	// Start transaction
@@ -59,7 +69,7 @@ function ciniki_links_add($ciniki) {
 	$strsql = "INSERT INTO ciniki_links (uuid, business_id, "
 		. "name, category, url, description, "
 		. "date_added, last_updated ) VALUES ( "
-		. "UUID(), "
+		. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['name']) . "', "
 		. "'" . ciniki_core_dbQuote($ciniki, $args['category']) . "', "
@@ -81,6 +91,7 @@ function ciniki_links_add($ciniki) {
 	// Add all the fields to the change log
 	//
 	$changelog_fields = array(
+		'uuid',
 		'name',
 		'category',
 		'url',
@@ -107,6 +118,9 @@ function ciniki_links_add($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'links');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.links.link',
+		'args'=>array('id'=>$link_id));
 
 	return array('stat'=>'ok', 'id'=>$link_id);
 }

@@ -15,7 +15,7 @@
 // -------
 // <rsp stat="ok">
 //
-function ciniki_links_delete($ciniki) {
+function ciniki_links_delete(&$ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
@@ -37,6 +37,23 @@ function ciniki_links_delete($ciniki) {
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}
+
+	//
+	// Get the link uuid
+	//
+	$strsql = "SELECT uuid FROM ciniki_links "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' " 
+		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.links', 'link');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['link']) ) {
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'889', 'msg'=>'The link does not exist'));
+	}
+	$link_uuid = $rc['link']['uuid'];
 
 	//
 	// Start transaction
@@ -86,6 +103,9 @@ function ciniki_links_delete($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'links');
+
+	$ciniki['syncqueue'][] = array('push'=>'ciniki.links.link',
+		'args'=>array('delete_uuid'=>$link_uuid, 'delete_id'=>$args['link_id']));
 
 	return array('stat'=>'ok');
 }
