@@ -17,13 +17,13 @@
 // 	<link id="" name="" url="" description=""/>
 // </links>
 //
-function ciniki_links_list($ciniki) {
+function ciniki_links_linkList($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

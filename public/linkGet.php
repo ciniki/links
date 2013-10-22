@@ -11,14 +11,14 @@
 // Returns
 // -------
 //
-function ciniki_links_get($ciniki) {
+function ciniki_links_linkGet($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'link_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No links specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Link'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

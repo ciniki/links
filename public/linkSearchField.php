@@ -12,16 +12,16 @@
 // Returns
 // -------
 //
-function ciniki_links_searchField($ciniki) {
+function ciniki_links_linkSearchField($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'field'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No field specified'),
-        'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'errmsg'=>'No search specified'), 
-        'limit'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No limit specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'field'=>array('required'=>'yes', 'blank'=>'no', 'validlist'=>array('category'), 'name'=>'Field'),
+        'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Search'), 
+        'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -39,17 +39,9 @@ function ciniki_links_searchField($ciniki) {
     }   
 
 	//
-	// Reject if an unknown field
-	//
-	if( $args['field'] != 'category'
-		) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'632', 'msg'=>'Invalid search field'));
-	}
-	//
 	// Get the number of faqs in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$args['field'] = preg_replace('/^.*\./', '', $args['field']);
 	$strsql = "SELECT " . $args['field'] . " AS name "
 		. "FROM ciniki_links "
 		. "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

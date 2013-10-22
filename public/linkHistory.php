@@ -16,7 +16,7 @@
 // Returns
 // -------
 //
-function ciniki_links_getHistory($ciniki) {
+function ciniki_links_linkHistory($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
