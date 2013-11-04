@@ -30,7 +30,7 @@ function ciniki_links_linkGet($ciniki) {
     // check permission to run this function for this business
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.get'); 
+    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   

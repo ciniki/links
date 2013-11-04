@@ -34,7 +34,7 @@ function ciniki_links_linkList($ciniki) {
     // Check access to business_id as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.list');
+    $ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkList');
     if( $ac['stat'] != 'ok' ) { 
         return $ac;
     }   

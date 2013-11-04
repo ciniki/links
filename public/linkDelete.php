@@ -33,7 +33,7 @@ function ciniki_links_linkDelete(&$ciniki) {
 	// Check access to business_id as owner
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-	$ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.delete');
+	$ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkDelete');
 	if( $ac['stat'] != 'ok' ) {
 		return $ac;
 	}

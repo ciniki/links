@@ -35,7 +35,7 @@ function ciniki_links_linkHistory($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-	$rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.getHistory');
+	$rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkHistory');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
