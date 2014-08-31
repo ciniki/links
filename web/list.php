@@ -16,19 +16,36 @@
 // 	<event id="" name="" />
 // </events>
 //
-function ciniki_links_web_list($ciniki, $business_id) {
+function ciniki_links_web_list($ciniki, $business_id, $args) {
 
-	$strsql = "SELECT ciniki_links.id, category AS cname, name, url, description "
-		. "FROM ciniki_links "
-		. "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "ORDER BY category, name ASC "
+	if( !isset($args['tag_type']) 
+		|| ($args['tag_type'] != '40' && $args['tag_type'] != '10')
+		) {
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'999', 'msg'=>'Category does not exist'));
+	}
+	$strsql = "SELECT ciniki_links.id, "
+		. "ciniki_links.name, "
+		. "ciniki_links.url, "
+		. "ciniki_links.description, "
+		. "ciniki_link_tags.tag_name AS sname "
+		. "FROM ciniki_link_tags "
+		. "LEFT JOIN ciniki_links ON ("
+			. "ciniki_link_tags.link_id = ciniki_links.id "
+			. "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. ") "
+		. "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
 		. "";
-	
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-	return ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
-		array('container'=>'categories', 'fname'=>'cname', 'name'=>'category',
-			'fields'=>array('cname')),
-		array('container'=>'links', 'fname'=>'name', 'name'=>'link',
+	if( $args['tag_permalink'] != '' ) {
+		$strsql .= "AND ciniki_link_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' ";
+	}
+	$strsql .= "ORDER BY ciniki_link_tags.tag_name, name ASC ";
+
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+	return ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.links', array(
+		array('container'=>'sections', 'fname'=>'sname',
+			'fields'=>array('name'=>'sname')),
+		array('container'=>'links', 'fname'=>'id', 'name'=>'link',
 			'fields'=>array('id', 'name', 'url', 'description')),
 		));
 }
