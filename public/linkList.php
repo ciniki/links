@@ -24,6 +24,8 @@ function ciniki_links_linkList($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Type'),
+		'tag_name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Name'),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -34,10 +36,40 @@ function ciniki_links_linkList($ciniki) {
     // Check access to business_id as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkList');
-    if( $ac['stat'] != 'ok' ) { 
-        return $ac;
+    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkList');
+    if( $rc['stat'] != 'ok' ) { 
+        return $rc;
     }   
+
+	if( (isset($args['tag_type']) && $args['tag_type'] != '')
+		&& (isset($args['tag_name']) && $args['tag_name'] != '')
+		) {
+		$strsql = "SELECT ciniki_links.id, "
+			. "ciniki_links.name, "
+			. "ciniki_links.url, "
+			. "ciniki_links.description "
+			. "FROM ciniki_link_tags "
+			. "LEFT JOIN ciniki_links ON ("
+				. "ciniki_link_tags.link_id = ciniki_links.id "
+				. "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
+			. "AND ciniki_link_tags.tag_name = '" . ciniki_core_dbQuote($ciniki, $args['tag_name']) . "' "
+			. "ORDER BY name ";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.links', array(
+			array('container'=>'links', 'fname'=>'id', 'name'=>'link',
+				'fields'=>array('id', 'name', 'url', 'description')),
+			));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['links']) ) {
+			return array('stat'=>'ok', 'links'=>array());
+		}
+		return array('stat'=>'ok', 'links'=>$rc['links']);
+	}  
 
 	$strsql = "SELECT id, name, "
 		. "IF(ciniki_links.category='', 'Uncategorized', ciniki_links.category) AS sname, "
@@ -58,6 +90,7 @@ function ciniki_links_linkList($ciniki) {
 	if( !isset($rc['sections']) ) {
 		return array('stat'=>'ok', 'sections'=>array());
 	}
+
 	return array('stat'=>'ok', 'sections'=>$rc['sections']);
 }
 ?>

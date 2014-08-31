@@ -22,6 +22,18 @@ function ciniki_links_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_link_history',
 		);
+	$objects['tag'] = array(
+		'name'=>'Tag',
+		'sync'=>'yes',
+		'table'=>'ciniki_link_tags',
+		'fields'=>array(
+			'link_id'=>array('ref'=>'ciniki.links.link'),
+			'tag_type'=>array(),
+			'tag_name'=>array(),
+			'permalink'=>array(),
+			),
+		'history_table'=>'ciniki_link_history',
+		);
 	
 	return array('stat'=>'ok', 'objects'=>$objects);
 }

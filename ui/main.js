@@ -31,6 +31,68 @@ function ciniki_links_main() {
 		this.menu.addClose('Back');
 
 		//
+		// tags or category list panel
+		//
+		this.tags = new M.panel('Links',
+			'ciniki_links_main', 'tags',
+			'mc', 'medium', 'sectioned', 'ciniki.links.main.tags');
+		this.tags.tag_type = 40;
+		this.tags.sections = {
+			'types':{'label':'', 'visible':'no', 'selected':'categories', 'type':'paneltabs', 'tabs':{
+				'categories':{'label':'Categories', 'fn':'M.ciniki_links_main.showTagsTab(10);'},
+				'tags':{'label':'Tags', 'fn':'M.ciniki_links_main.showTagsTab(40);'},
+				}},
+			'categories':{'label':'', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'cellClasses':[''],
+				'addTxt':'Add Link',
+				'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showTags();\',0);',
+				'noData':'No links added',
+				},
+			'tags':{'label':'', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'cellClasses':[''],
+				'addTxt':'Add Link',
+				'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showTags();\',0);',
+				'noData':'No links added',
+				},
+			};
+		this.tags.sectionData = function(s) { return this.data[s]; }
+		this.tags.cellValue = function(s, i, j, d) { 
+			return d.tag.name + (d.tag.count!=null?' <span class="count">'+d.tag.count+'</span>':''); 
+		}
+		this.tags.rowFn = function(s, i, d) { return 'M.ciniki_links_main.showList(\'M.ciniki_links_main.showTags();\',M.ciniki_links_main.tags.tag_type,\'' + escape(d.tag.name) + '\');' }
+		this.tags.noData = function(s) { return this.sections[s].noData; }
+		this.tags.addButton('add', 'Add', 'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showTags();\',0);');
+		this.tags.addClose('Back');
+
+		//
+		// tags or category list panel
+		//
+		this.list = new M.panel('Links',
+			'ciniki_links_main', 'list',
+			'mc', 'medium', 'sectioned', 'ciniki.links.main.list');
+		this.list.tag_type = 40;
+		this.list.tag_name = '';
+		this.list.sections = {
+			'links':{'label':'', 'type':'simplegrid', 'num_cols':1,
+				'headerValues':null,
+				'cellClasses':['multiline'],
+				'addTxt':'Add Link',
+				'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showList();\',0,M.ciniki_links_main.list.tag_type,escape(M.ciniki_links_main.list.tag_name));',
+				'noData':'No links added',
+				},
+			};
+		this.list.sectionData = function(s) { return this.data[s]; }
+		this.list.cellValue = function(s, i, j, d) { 
+			return '<span class="maintext">' + d.link.name + '</span><span class="subtext">' + d.link.url + '</span>'; 
+		}
+		this.list.rowFn = function(s, i, d) { return 'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showList();\',' + d.link.id + ');' }
+		this.list.noData = function(s) { return this.sections[s].noData; }
+		this.list.addButton('add', 'Add', 'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showList();\',0,M.ciniki_links_main.list.tag_type,M.ciniki_links_main.list.tag_name);');
+		this.list.addClose('Back');
+
+		//
 		// The edit link panel 
 		//
 		this.edit = new M.panel('Link',
@@ -44,6 +106,12 @@ function ciniki_links_main() {
                 'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
                 'url':{'label':'URL', 'hint':'Enter the http:// address for your links website', 'type':'text'},
                 }}, 
+			'_categories':{'label':'Categories', 'active':'no', 'fields':{
+				'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category:'},
+				}},
+			'_tags':{'label':'Tags', 'active':'no', 'fields':{
+				'tags':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new tag:'},
+				}},
 			'_description':{'label':'Additional Information', 'fields':{
 				'description':{'label':'', 'hidelabel':'yes', 'hint':'Add additional information about your link', 'type':'textarea'},
 				}},
@@ -102,8 +170,38 @@ function ciniki_links_main() {
 			alert('App Error');
 			return false;
 		} 
+
+		if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 ) {
+			this.edit.sections._categories.active = 'yes';
+			this.edit.sections.general.fields.category.active = 'no';
+		} else {
+			this.edit.sections._categories.active = 'no';
+			this.edit.sections.general.fields.category.active = 'yes';
+		}
+		if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 ) {
+			this.edit.sections._tags.active = 'yes';
+		} else {
+			this.edit.sections._tags.active = 'no';
+		}
 		
-		this.showMenu(cb);
+		if( (M.curBusiness.modules['ciniki.links'].flags&0x03) == 0x03 ) {
+			this.tags.sections.tags.label = '';
+			this.tags.sections.categories.label = '';
+			this.tags.sections.types.visible = 'yes';
+			this.showTags(cb, 10);
+		} else if( (M.curBusiness.modules['ciniki.links'].flags&0x01) == 0x01 ) {
+			this.tags.sections.categories.label = 'Categories';
+			this.tags.sections.tags.label = 'Tags';
+			this.tags.sections.types.visible = 'no';
+			this.showTags(cb, 10);
+		} else if( (M.curBusiness.modules['ciniki.links'].flags&0x02) == 0x02 ) {
+			this.tags.sections.categories.label = 'Categories';
+			this.tags.sections.tags.label = 'Tags';
+			this.tags.sections.types.visible = 'no';
+			this.showTags(cb, 40);
+		} else {
+			this.showMenu(cb);
+		}
 	};
 
 	this.showMenu = function(cb) {
@@ -132,7 +230,7 @@ function ciniki_links_main() {
 						'headerValues':null,
 						'cellClasses':[''],
 						'addTxt':'Add Link',
-						'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showMenu();\',0,\'' + rsp.sections[i].section.sname + '\');',
+						'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showMenu();\',0,0,\'' + rsp.sections[i].section.sname + '\');',
 						'noData':'No links added',
 						};
 				}
@@ -152,30 +250,143 @@ function ciniki_links_main() {
 			p.show(cb);
 		});
 	};
-
-	this.showEdit = function(cb, lid, category) {
-		this.edit.reset();
-		if( lid != null ) {
-			this.edit.link_id = lid;
+	
+	this.showTags = function(cb, t) {
+		if( t != null ) { this.tags.tag_type = t; }
+		if( this.tags.tag_type == 10 ) {
+			this.tags.sections.categories.visible = 'yes';
+			this.tags.sections.tags.visible = 'no';
+			this.tags.sections.types.selected = 'categories';
+		} else {
+			this.tags.sections.categories.visible = 'no';
+			this.tags.sections.tags.visible = 'yes';
+			this.tags.sections.types.selected = 'tags';
 		}
-		if( this.edit.link_id > 0 ) {
-			var rsp = M.api.getJSONCb('ciniki.links.linkGet', 
-				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, function(rsp) {
+		M.api.getJSONCb('ciniki.links.linkTags', {'business_id':M.curBusinessID}, function(rsp) {
+			if( rsp.stat != 'ok' ) {
+				M.api.err(rsp);
+				return false;
+			}
+			var p = M.ciniki_links_main.tags;
+			p.data = rsp;
+			p.refresh();
+			p.show(cb);
+		});
+	};
+
+	this.showTagsTab = function(t) {
+		if( t != null ) {
+			this.tags.tag_type = t;
+		}
+		if( this.tags.tag_type == 10 ) {
+			this.tags.sections.categories.visible = 'yes';
+			this.tags.sections.tags.visible = 'no';
+			this.tags.sections.types.selected = 'categories';
+		} else {
+			this.tags.sections.categories.visible = 'no';
+			this.tags.sections.tags.visible = 'yes';
+			this.tags.sections.types.selected = 'tags';
+		}
+		this.tags.refresh();
+		this.tags.show();
+	};
+
+	//
+	// t - tag type
+	// n - tag name
+	this.showList = function(cb,t,n) {
+		if( t != null ) { this.list.tag_type = t; }
+		if( n != null ) { this.list.tag_name = unescape(n); }
+		this.list.sections.links.label = this.list.tag_name;
+		M.api.getJSONCb('ciniki.links.linkList', 
+			{'business_id':M.curBusinessID, 
+				'tag_type':this.list.tag_type, 'tag_name':encodeURIComponent(this.list.tag_name)}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
 						M.api.err(rsp);
 						return false;
 					}
-					M.ciniki_links_main.edit.data = rsp.link;
-					M.ciniki_links_main.edit.refresh();
-					M.ciniki_links_main.edit.show(cb);
+					var p = M.ciniki_links_main.list;
+					p.data = rsp;
+					p.refresh();
+					p.show(cb);
+				});
+	};
+
+	this.showEdit = function(cb, lid, t, n) {
+		this.edit.reset();
+		if( lid != null ) { this.edit.link_id = lid; }
+		if( this.edit.link_id > 0 ) {
+			M.api.getJSONCb('ciniki.links.linkGet', 
+				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					var p = M.ciniki_links_main.edit;
+					p.data = rsp.link;
+					if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 && rsp.categories != null ) {
+						var tags = [];
+						for(i in rsp.categories) {
+							tags.push(rsp.categories[i].tag.name);
+						}
+						p.sections._categories.fields.categories.tags = tags;
+					} else {
+						p.sections._categories.fields.categories.tags = [];
+					}
+					if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 && rsp.tags != null ) {
+						var tags = [];
+						for(i in rsp.tags) {
+							tags.push(rsp.tags[i].tag.name);
+						}
+						p.sections._tags.fields.tags.tags = tags;
+					} else {
+						p.sections._tags.fields.tags.tags = [];
+					}
+					p.refresh();
+					p.show(cb);
 				});
 		} else {
 			this.edit.data = {};
-			if( category != null && category != '' ) {
-				this.edit.data.category = category;
+			if( t != null && n != null ) {
+				if( t == 10 ) {
+					this.edit.data.categories = unescape(n);
+				}
+				if( t == 40 ) {
+					this.edit.data.tags = unescape(n);
+				}
 			}
-			this.edit.refresh();
-			this.edit.show(cb);
+			if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 ) {
+				M.api.getJSONCb('ciniki.links.linkTags', {'business_id':M.curBusinessID}, function(rsp) {
+					if( rsp.stat != 'ok' ) {
+						M.api.err(rsp);
+						return false;
+					}
+					var p = M.ciniki_links_main.edit;
+					if( rsp.categories != null ) {
+						var tags = [];
+						for(i in rsp.categories) {
+							tags.push(rsp.categories[i].tag.name);
+						}
+						p.sections._categories.fields.categories.tags = tags;
+					} else {
+						p.sections._categories.fields.categories.tags = [];
+					}
+					if( rsp.tags != null ) {
+						var tags = [];
+						for(i in rsp.tags) {
+							tags.push(rsp.tags[i].tag.name);
+						}
+						p.sections._tags.fields.tags.tags = tags;
+					} else {
+						p.sections._tags.fields.tags.tags = [];
+					}
+					p.refresh();
+					p.show(cb);
+				});
+			} else {
+				this.edit.refresh();
+				this.edit.show(cb);
+			}
 		}
 	};
 
