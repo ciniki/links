@@ -26,13 +26,9 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
 	$strsql = "SELECT ciniki_links.id, "
 		. "ciniki_links.name, "
 		. "ciniki_links.url, "
-		. "ciniki_links.description, ";
-	if( $args['tag_permalink'] == '' ) {
-		$strsql .= "ciniki_link_tags.tag_name AS sname ";
-	} else {
-		$strsql .= "'' AS sname ";
-	}
-	$strsql .= "FROM ciniki_link_tags "
+		. "ciniki_links.description, "
+		. "ciniki_link_tags.tag_name AS sname "
+		. "FROM ciniki_link_tags "
 		. "LEFT JOIN ciniki_links ON ("
 			. "ciniki_link_tags.link_id = ciniki_links.id "
 			. "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
