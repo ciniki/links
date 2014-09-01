@@ -41,7 +41,7 @@ function ciniki_links_linkGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
-	$strsql = "SELECT ciniki_links.id, name, category, url, description, "
+	$strsql = "SELECT ciniki_links.id, name, category, url, description, notes, "
 		. "date_added, last_updated "
 		. "FROM ciniki_links "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

@@ -1,0 +1,5 @@
+#
+# Added extra column for private notes
+#
+ALTER TABLE ciniki_links ADD COLUMN notes varchar(20000) not null AFTER description;
+ALTER TABLE ciniki_links COMMENT='v1.03';

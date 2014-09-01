@@ -23,7 +23,8 @@ function ciniki_links_linkAdd(&$ciniki) {
 		'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'), 
 		'category'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Category'), 
 		'url'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'URL'), 
-		'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'), 
+		'description'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Description'), 
+		'notes'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Notes'), 
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'), 
 		'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'), 
 		));

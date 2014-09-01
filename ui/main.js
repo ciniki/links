@@ -115,6 +115,9 @@ function ciniki_links_main() {
 			'_description':{'label':'Additional Information', 'fields':{
 				'description':{'label':'', 'hidelabel':'yes', 'hint':'Add additional information about your link', 'type':'textarea'},
 				}},
+			'_notes':{'label':'Notes', 'fields':{
+				'notes':{'label':'', 'hidelabel':'yes', 'hint':'Other notes about this link', 'type':'textarea'},
+				}},
 			'_save':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_links_main.saveLink();'},
 				'delete':{'label':'Delete', 'fn':'M.ciniki_links_main.deleteLink();'},
@@ -182,6 +185,11 @@ function ciniki_links_main() {
 			this.edit.sections._tags.active = 'yes';
 		} else {
 			this.edit.sections._tags.active = 'no';
+		}
+		if( (M.curBusiness.modules['ciniki.links'].flags&0x10) > 0 ) {
+			this.edit.sections._notes.active = 'yes';
+		} else {
+			this.edit.sections._notes.active = 'no';
 		}
 		
 		if( (M.curBusiness.modules['ciniki.links'].flags&0x03) == 0x03 ) {

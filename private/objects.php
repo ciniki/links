@@ -19,6 +19,7 @@ function ciniki_links_objects($ciniki) {
 			'category'=>array(),
 			'url'=>array(),
 			'description'=>array(),
+			'notes'=>array(),
 			),
 		'history_table'=>'ciniki_link_history',
 		);
