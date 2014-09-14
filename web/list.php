@@ -21,7 +21,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
 	if( !isset($args['tag_type']) 
 		|| ($args['tag_type'] != '40' && $args['tag_type'] != '10')
 		) {
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'999', 'msg'=>'Category does not exist'));
+		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1109', 'msg'=>'Category does not exist'));
 	}
 	$strsql = "SELECT ciniki_links.id, "
 		. "ciniki_links.name, "
