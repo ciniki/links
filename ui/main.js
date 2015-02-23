@@ -103,7 +103,7 @@ function ciniki_links_main() {
         this.edit.sections = { 
             'general':{'label':'General', 'fields':{
                 'name':{'label':'Name', 'hint':'Company or links name', 'type':'text'},
-                'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
+//                'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
                 'url':{'label':'URL', 'hint':'Enter the http:// address for your links website', 'type':'text'},
                 }}, 
 			'_categories':{'label':'Categories', 'active':'no', 'fields':{
@@ -124,28 +124,28 @@ function ciniki_links_main() {
 				}},
             };  
 		this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
-		this.edit.liveSearchCb = function(s, i, value) {
-			if( i == 'category' ) {
-				var rsp = M.api.getJSONBgCb('ciniki.links.linkSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
-					function(rsp) {
-						M.ciniki_links_main.edit.liveSearchShow(s, i, M.gE(M.ciniki_links_main.edit.panelUID + '_' + i), rsp.results);
-					});
-			}
-		};
-		this.edit.liveSearchResultValue = function(s, f, i, j, d) {
-			if( (f == 'category' ) && d.result != null ) { return d.result.name; }
-			return '';
-		};
-		this.edit.liveSearchResultRowFn = function(s, f, i, j, d) { 
-			if( (f == 'category' )
-				&& d.result != null ) {
-				return 'M.ciniki_links_main.edit.updateField(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.name) + '\');';
-			}
-		};
-		this.edit.updateField = function(s, lid, result) {
-			M.gE(this.panelUID + '_' + lid).value = unescape(result);
-			this.removeLiveSearch(s, lid);
-		};
+//		this.edit.liveSearchCb = function(s, i, value) {
+//			if( i == 'category' ) {
+//				var rsp = M.api.getJSONBgCb('ciniki.links.linkSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+//					function(rsp) {
+//						M.ciniki_links_main.edit.liveSearchShow(s, i, M.gE(M.ciniki_links_main.edit.panelUID + '_' + i), rsp.results);
+//					});
+//			}
+//		};
+//		this.edit.liveSearchResultValue = function(s, f, i, j, d) {
+//			if( (f == 'category' ) && d.result != null ) { return d.result.name; }
+//			return '';
+//		};
+//		this.edit.liveSearchResultRowFn = function(s, f, i, j, d) { 
+//			if( (f == 'category' )
+//				&& d.result != null ) {
+//				return 'M.ciniki_links_main.edit.updateField(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.name) + '\');';
+//			}
+//		};
+//		this.edit.updateField = function(s, lid, result) {
+//			M.gE(this.panelUID + '_' + lid).value = unescape(result);
+//			this.removeLiveSearch(s, lid);
+//		};
 		this.edit.fieldHistoryArgs = function(s, i) {
 			return {'method':'ciniki.links.linkHistory', 'args':{'business_id':M.curBusinessID, 'link_id':this.link_id, 'field':i}};
 		}
@@ -176,10 +176,10 @@ function ciniki_links_main() {
 
 		if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 ) {
 			this.edit.sections._categories.active = 'yes';
-			this.edit.sections.general.fields.category.active = 'no';
+//			this.edit.sections.general.fields.category.active = 'no';
 		} else {
 			this.edit.sections._categories.active = 'no';
-			this.edit.sections.general.fields.category.active = 'yes';
+//			this.edit.sections.general.fields.category.active = 'yes';
 		}
 		if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 ) {
 			this.edit.sections._tags.active = 'yes';
@@ -241,6 +241,9 @@ function ciniki_links_main() {
 						'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showMenu();\',0,0,\'' + rsp.sections[i].section.sname + '\');',
 						'noData':'No links added',
 						};
+					if( (M.curBusiness.modules['ciniki.links'].flags&0x01) == 0 ) {
+						p.sections[rsp.sections[i].section.sname].label = 'Links';
+					}
 				}
 			} else {
 				p.data = {'_':{}};

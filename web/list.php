@@ -23,23 +23,35 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
 		) {
 		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1109', 'msg'=>'Category does not exist'));
 	}
-	$strsql = "SELECT ciniki_links.id, "
-		. "ciniki_links.name, "
-		. "ciniki_links.url, "
-		. "ciniki_links.description, "
-		. "ciniki_link_tags.tag_name AS sname "
-		. "FROM ciniki_link_tags "
-		. "LEFT JOIN ciniki_links ON ("
-			. "ciniki_link_tags.link_id = ciniki_links.id "
-			. "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-			. ") "
-		. "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
-		. "";
-	if( $args['tag_permalink'] != '' ) {
-		$strsql .= "AND ciniki_link_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' ";
+	
+	if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+		$strsql = "SELECT ciniki_links.id, "
+			. "ciniki_links.name, "
+			. "ciniki_links.url, "
+			. "ciniki_links.description, "
+			. "ciniki_link_tags.tag_name AS sname "
+			. "FROM ciniki_link_tags "
+			. "LEFT JOIN ciniki_links ON ("
+				. "ciniki_link_tags.link_id = ciniki_links.id "
+				. "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+				. ") "
+			. "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
+			. "";
+		if( $args['tag_permalink'] != '' ) {
+			$strsql .= "AND ciniki_link_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag_permalink']) . "' ";
+		}
+		$strsql .= "ORDER BY ciniki_link_tags.tag_name, name ASC ";
+	} else {
+		$strsql = "SELECT ciniki_links.id, "
+			. "ciniki_links.name, "
+			. "ciniki_links.url, "
+			. "ciniki_links.description, "
+			. "'' AS sname "
+			. "FROM ciniki_links "
+			. "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "ORDER BY name ASC ";
 	}
-	$strsql .= "ORDER BY ciniki_link_tags.tag_name, name ASC ";
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
 	return ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.links', array(
