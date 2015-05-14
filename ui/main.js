@@ -118,9 +118,9 @@ function ciniki_links_main() {
 			'_notes':{'label':'Notes', 'fields':{
 				'notes':{'label':'', 'hidelabel':'yes', 'hint':'Other notes about this link', 'type':'textarea'},
 				}},
-			'_save':{'label':'', 'buttons':{
+			'_buttons':{'label':'', 'buttons':{
 				'save':{'label':'Save', 'fn':'M.ciniki_links_main.saveLink();'},
-				'delete':{'label':'Delete', 'fn':'M.ciniki_links_main.deleteLink();'},
+				'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_links_main.deleteLink();'},
 				}},
             };  
 		this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -325,8 +325,10 @@ function ciniki_links_main() {
 
 	this.showEdit = function(cb, lid, t, n) {
 		this.edit.reset();
+		this.edit.sections._buttons.buttons.delete.visible = 'no';
 		if( lid != null ) { this.edit.link_id = lid; }
 		if( this.edit.link_id > 0 ) {
+			this.edit.sections._buttons.buttons.delete.visible = 'yes';
 			M.api.getJSONCb('ciniki.links.linkGet', 
 				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
 					if( rsp.stat != 'ok' ) {
