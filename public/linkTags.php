@@ -73,6 +73,32 @@ function ciniki_links_linkTags($ciniki) {
 			} 
 		}
 	}
+
+	//
+	// Check if there are any uncategorized links
+	//
+	if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+		$strsql = "SELECT 'uncategorized' AS name, COUNT(ciniki_links.id) AS num_tags, "
+			. "ciniki_link_tags.tag_name AS sname "
+			. "FROM ciniki_links "
+			. "LEFT JOIN ciniki_link_tags ON ("
+				. "ciniki_links.id = ciniki_link_tags.link_id "
+				. "AND ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. ") "
+			. "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "GROUP BY ciniki_link_tags.tag_name "
+			. "HAVING ISNULL(ciniki_link_tags.tag_name) "
+			. "";
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbCount');
+		$rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.links', 'num');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['num']) ) {
+			$rsp['categories'][] = array('tag'=>array('name'=>'Uncategorized', 'count'=>$rc['num']['uncategorized']));
+		}
+	}
+
 	return $rsp;
 }
 ?>
