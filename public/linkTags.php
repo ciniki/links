@@ -94,7 +94,7 @@ function ciniki_links_linkTags($ciniki) {
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-		if( isset($rc['num']) ) {
+		if( isset($rc['num']) && isset($rc['num']['uncategorized']) ) {
 			$rsp['categories'][] = array('tag'=>array('name'=>'Uncategorized', 'count'=>$rc['num']['uncategorized']));
 		}
 	}
