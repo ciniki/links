@@ -41,22 +41,33 @@ function ciniki_links_linkGet($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
-	$strsql = "SELECT ciniki_links.id, name, category, url, description, notes, "
-		. "date_added, last_updated "
-		. "FROM ciniki_links "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND ciniki_links.id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
-		. "";
+	//
+	// Check for new link
+	//
+	if( $args['link_id'] == '0' ) {
+		$rsp = array('stat'=>'ok', 'link'=>array('id'=>'0', 'name'=>'', 'url'=>'', 'description'=>'', 'notes'=>''));
+	} 
 	
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.links', 'link');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
+	//
+	// Lookup existing list
+	//
+	else {
+		$strsql = "SELECT ciniki_links.id, name, url, description, notes "
+			. "FROM ciniki_links "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "AND ciniki_links.id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
+			. "";
+		
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.links', 'link');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( !isset($rc['link']) ) {
+			return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'633', 'msg'=>'Unable to find link'));
+		}
+		$rsp = array('stat'=>'ok', 'link'=>$rc['link']);
 	}
-	if( !isset($rc['link']) ) {
-		return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'633', 'msg'=>'Unable to find link'));
-	}
-	$rsp = array('stat'=>'ok', 'link'=>$rc['link']);
 
 	//
 	// Load tags if enabled

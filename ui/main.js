@@ -327,80 +327,45 @@ function ciniki_links_main() {
 		this.edit.reset();
 		this.edit.sections._buttons.buttons.delete.visible = 'no';
 		if( lid != null ) { this.edit.link_id = lid; }
-		if( this.edit.link_id > 0 ) {
-			this.edit.sections._buttons.buttons.delete.visible = 'yes';
-			M.api.getJSONCb('ciniki.links.linkGet', 
-				{'business_id':M.curBusinessID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
-					if( rsp.stat != 'ok' ) {
-						M.api.err(rsp);
-						return false;
-					}
-					var p = M.ciniki_links_main.edit;
-					p.data = rsp.link;
-					if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 && rsp.categories != null ) {
-						var tags = [];
-						for(i in rsp.categories) {
-							tags.push(rsp.categories[i].tag.name);
-						}
-						p.sections._categories.fields.categories.tags = tags;
-					} else {
-						p.sections._categories.fields.categories.tags = [];
-					}
-					if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 && rsp.tags != null ) {
-						var tags = [];
-						for(i in rsp.tags) {
-							tags.push(rsp.tags[i].tag.name);
-						}
-						p.sections._tags.fields.tags.tags = tags;
-					} else {
-						p.sections._tags.fields.tags.tags = [];
-					}
-					p.refresh();
-					p.show(cb);
-				});
-		} else {
-			this.edit.data = {};
-			if( t != null && n != null ) {
-				if( t == 10 ) {
-					this.edit.data.categories = unescape(n);
+		this.edit.sections._buttons.buttons.delete.visible = (this.edit.link_id>0?'yes':'no');
+		M.api.getJSONCb('ciniki.links.linkGet', 
+			{'business_id':M.curBusinessID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
+				if( rsp.stat != 'ok' ) {
+					M.api.err(rsp);
+					return false;
 				}
-				if( t == 40 ) {
-					this.edit.data.tags = unescape(n);
+				var p = M.ciniki_links_main.edit;
+				p.data = rsp.link;
+				if( rsp.link.id == 0 ) {
+					if( t != null && n != null ) {
+						if( t == 10 ) {
+							p.data.categories = unescape(n);
+						} else if( t == 40 ) {
+							p.data.tags = unescape(n);
+						}
+					}
 				}
-			}
-			if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 ) {
-				M.api.getJSONCb('ciniki.links.linkTags', {'business_id':M.curBusinessID}, function(rsp) {
-					if( rsp.stat != 'ok' ) {
-						M.api.err(rsp);
-						return false;
+				if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 && rsp.categories != null ) {
+					var tags = [];
+					for(i in rsp.categories) {
+						tags.push(rsp.categories[i].tag.name);
 					}
-					var p = M.ciniki_links_main.edit;
-					if( rsp.categories != null ) {
-						var tags = [];
-						for(i in rsp.categories) {
-							tags.push(rsp.categories[i].tag.name);
-						}
-						p.sections._categories.fields.categories.tags = tags;
-					} else {
-						p.sections._categories.fields.categories.tags = [];
+					p.sections._categories.fields.categories.tags = tags;
+				} else {
+					p.sections._categories.fields.categories.tags = [];
+				}
+				if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 && rsp.tags != null ) {
+					var tags = [];
+					for(i in rsp.tags) {
+						tags.push(rsp.tags[i].tag.name);
 					}
-					if( rsp.tags != null ) {
-						var tags = [];
-						for(i in rsp.tags) {
-							tags.push(rsp.tags[i].tag.name);
-						}
-						p.sections._tags.fields.tags.tags = tags;
-					} else {
-						p.sections._tags.fields.tags.tags = [];
-					}
-					p.refresh();
-					p.show(cb);
-				});
-			} else {
-				this.edit.refresh();
-				this.edit.show(cb);
-			}
-		}
+					p.sections._tags.fields.tags.tags = tags;
+				} else {
+					p.sections._tags.fields.tags.tags = [];
+				}
+				p.refresh();
+				p.show(cb);
+			});
 	};
 
 	this.saveLink = function() {
