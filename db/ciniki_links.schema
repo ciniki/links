@@ -6,30 +6,30 @@
 #
 # Fields
 # ------
-# id:				The ID assigned to the link.
-# uuid:				The Universal Unique ID.
-# business_id:		The business the link is attached to.
-# category:			The category to put the link in.
-# name:				The name for the link, could be business name or person's name.
-# url:				The url of the link.
-# description:		The description of the link or their business.
-# notes:			The notes for a link, that will not be published on the website.
-# date_added:		The date and time the record was added.
-# last_updated:		The date and time the record was last updated.
+# id:               The ID assigned to the link.
+# uuid:             The Universal Unique ID.
+# business_id:      The business the link is attached to.
+# category:         The category to put the link in.
+# name:             The name for the link, could be business name or person's name.
+# url:              The url of the link.
+# description:      The description of the link or their business.
+# notes:            The notes for a link, that will not be published on the website.
+# date_added:       The date and time the record was added.
+# last_updated:     The date and time the record was last updated.
 #
 create table ciniki_links (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	name varchar(150) not null,
-	category varchar(200) not null,
-	url varchar(255) not null,
-	description varchar(6000) not null,
-	notes varchar(6000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (uuid),
-	index (business_id, name),
-	index business_uuid (business_id, uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    name varchar(150) not null,
+    category varchar(200) not null,
+    url varchar(255) not null,
+    description varchar(6000) not null,
+    notes varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index (business_id, name),
+    index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.03';
