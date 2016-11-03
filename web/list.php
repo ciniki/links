@@ -21,7 +21,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
     if( !isset($args['tag_type']) 
         || ($args['tag_type'] != '40' && $args['tag_type'] != '10')
         ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'1109', 'msg'=>'Category does not exist'));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.links.7', 'msg'=>'Category does not exist'));
     }
     
     if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {

@@ -64,7 +64,7 @@ function ciniki_links_linkGet($ciniki) {
             return $rc;
         }
         if( !isset($rc['link']) ) {
-            return array('stat'=>'ok', 'err'=>array('pkg'=>'ciniki', 'code'=>'633', 'msg'=>'Unable to find link'));
+            return array('stat'=>'ok', 'err'=>array('code'=>'ciniki.links.5', 'msg'=>'Unable to find link'));
         }
         $rsp = array('stat'=>'ok', 'link'=>$rc['link']);
     }

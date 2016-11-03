@@ -12,7 +12,7 @@
 //
 function ciniki_links_upgradeCategories($ciniki) {
     if( ($ciniki['session']['user']['perms'] & 0x01) != 0x01 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'999', 'msg'=>'Unable to upgrade'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.links.6', 'msg'=>'Unable to upgrade'));
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');

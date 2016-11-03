@@ -51,7 +51,7 @@ function ciniki_links_linkDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['link']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'889', 'msg'=>'The link does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.links.4', 'msg'=>'The link does not exist'));
     }
     $uuid = $rc['link']['uuid'];
 
