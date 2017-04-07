@@ -24,7 +24,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.links.7', 'msg'=>'Category does not exist'));
     }
     
-    if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+    if( isset($ciniki['business']['modules']['ciniki.links']['flags']) && ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
         $strsql = "SELECT ciniki_links.id, "
             . "ciniki_links.name, "
             . "ciniki_links.url, "
@@ -68,7 +68,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
     //
     // If categories are enabled, check for any uncategorized links
     //
-    if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+    if( isset($ciniki['business']['modules']['ciniki.links']['flags']) && ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
         $strsql = "SELECT ciniki_links.id, "
             . "ciniki_links.name, "
             . "ciniki_links.url, "
