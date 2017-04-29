@@ -55,10 +55,8 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.links', array(
-        array('container'=>'sections', 'fname'=>'sname',
-            'fields'=>array('name'=>'sname')),
-        array('container'=>'links', 'fname'=>'id', 'name'=>'link',
-            'fields'=>array('id', 'name', 'url', 'description')),
+        array('container'=>'categories', 'fname'=>'sname', 'fields'=>array('name'=>'sname')),
+        array('container'=>'list', 'fname'=>'id', 'name'=>'link', 'fields'=>array('id', 'name', 'title'=>'name', 'url', 'description')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -85,8 +83,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.links', array(
-            array('container'=>'links', 'fname'=>'id', 'name'=>'link',
-                'fields'=>array('id', 'name', 'url', 'description')),
+            array('container'=>'links', 'fname'=>'id', 'name'=>'link', 'fields'=>array('id', 'name', 'url', 'description')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
