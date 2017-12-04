@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will delete a link from the business.
+// This method will delete a link from the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the link is attached to.
+// tnid:         The ID of the tenant the link is attached to.
 // link_id:         The ID of the link to be removed.
 //
 // Returns
@@ -21,7 +21,7 @@ function ciniki_links_linkDelete(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'link_id'=>array('required'=>'yes', 'default'=>'', 'blank'=>'yes', 'name'=>'Link'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,10 +30,10 @@ function ciniki_links_linkDelete(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $ac = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkDelete');
+    $ac = ciniki_links_checkAccess($ciniki, $args['tnid'], 'ciniki.links.linkDelete');
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
@@ -42,7 +42,7 @@ function ciniki_links_linkDelete(&$ciniki) {
     // Get the link uuid
     //
     $strsql = "SELECT uuid FROM ciniki_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' " 
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -73,7 +73,7 @@ function ciniki_links_linkDelete(&$ciniki) {
     // Remove any tags
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
-    $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.links', 'tag', $args['business_id'],
+    $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.links', 'tag', $args['tnid'],
         'ciniki_link_tags', 'ciniki_link_history', 'link_id', $args['link_id']);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.links');
@@ -84,7 +84,7 @@ function ciniki_links_linkDelete(&$ciniki) {
     // Delete the object
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.links.link', $args['link_id'], $uuid, 0x04);
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.links.link', $args['link_id'], $uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.links');
         return $rc;
@@ -99,11 +99,11 @@ function ciniki_links_linkDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'links');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'links');
 
     return array('stat'=>'ok');
 }

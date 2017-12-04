@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
@@ -16,7 +16,7 @@
 //  <event id="" name="" />
 // </events>
 //
-function ciniki_links_web_list($ciniki, $business_id, $args) {
+function ciniki_links_web_list($ciniki, $tnid, $args) {
 
     if( !isset($args['tag_type']) 
         || ($args['tag_type'] != '40' && $args['tag_type'] != '10')
@@ -24,7 +24,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.links.7', 'msg'=>'Category does not exist'));
     }
     
-    if( isset($ciniki['business']['modules']['ciniki.links']['flags']) && ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+    if( isset($ciniki['tenant']['modules']['ciniki.links']['flags']) && ($ciniki['tenant']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
         $strsql = "SELECT ciniki_links.id, "
             . "ciniki_links.name, "
             . "ciniki_links.url, "
@@ -33,9 +33,9 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
             . "FROM ciniki_link_tags "
             . "LEFT JOIN ciniki_links ON ("
                 . "ciniki_link_tags.link_id = ciniki_links.id "
-                . "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "";
         if( $args['tag_permalink'] != '' ) {
@@ -49,7 +49,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
             . "ciniki_links.description, "
             . "'' AS sname "
             . "FROM ciniki_links "
-            . "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "ORDER BY name ASC ";
     }
 
@@ -66,7 +66,7 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
     //
     // If categories are enabled, check for any uncategorized links
     //
-    if( isset($ciniki['business']['modules']['ciniki.links']['flags']) && ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+    if( isset($ciniki['tenant']['modules']['ciniki.links']['flags']) && ($ciniki['tenant']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
         $strsql = "SELECT ciniki_links.id, "
             . "ciniki_links.name, "
             . "ciniki_links.url, "
@@ -75,9 +75,9 @@ function ciniki_links_web_list($ciniki, $business_id, $args) {
             . "FROM ciniki_links "
             . "LEFT JOIN ciniki_link_tags ON ("
                 . "ciniki_links.id = ciniki_link_tags.link_id "
-                . "AND ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+                . "AND ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
-            . "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "HAVING ISNULL(ciniki_link_tags.tag_name) "
             . "ORDER BY ciniki_links.name "
             . "";

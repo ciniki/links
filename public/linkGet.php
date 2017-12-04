@@ -17,7 +17,7 @@ function ciniki_links_linkGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'link_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Link'), 
         'tags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tags'), 
         )); 
@@ -28,10 +28,10 @@ function ciniki_links_linkGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkGet'); 
+    $rc = ciniki_links_checkAccess($ciniki, $args['tnid'], 'ciniki.links.linkGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
@@ -54,7 +54,7 @@ function ciniki_links_linkGet($ciniki) {
     else {
         $strsql = "SELECT ciniki_links.id, name, url, description, notes "
             . "FROM ciniki_links "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_links.id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
             . "";
         
@@ -79,7 +79,7 @@ function ciniki_links_linkGet($ciniki) {
         $strsql = "SELECT tag_type, tag_name AS lists "
             . "FROM ciniki_link_tags "
             . "WHERE link_id = '" . ciniki_core_dbQuote($ciniki, $args['link_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "ORDER BY tag_type, tag_name "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -106,7 +106,7 @@ function ciniki_links_linkGet($ciniki) {
             //
             $strsql = "SELECT DISTINCT tag_type, tag_name "
                 . "FROM ciniki_link_tags "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "ORDER BY tag_type, tag_name "
                 . "";
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

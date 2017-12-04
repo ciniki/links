@@ -2,14 +2,14 @@
 //
 // Description
 // -----------
-// This function will return the list of links for a business.  It is restricted
-// to business owners and sysadmins.
+// This function will return the list of links for a tenant.  It is restricted
+// to tenant owners and sysadmins.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get links for.
+// tnid:     The ID of the tenant to get links for.
 //
 // Returns
 // -------
@@ -23,7 +23,7 @@ function ciniki_links_linkList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'tag_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Type'),
         'tag_name'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tag Name'),
         ));
@@ -33,10 +33,10 @@ function ciniki_links_linkList($ciniki) {
     $args = $rc['args'];
     
     //  
-    // Check access to business_id as owner, or sys admin. 
+    // Check access to tnid as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkList');
+    $rc = ciniki_links_checkAccess($ciniki, $args['tnid'], 'ciniki.links.linkList');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -55,10 +55,10 @@ function ciniki_links_linkList($ciniki) {
             . "FROM ciniki_links "
             . "LEFT JOIN ciniki_link_tags ON ("
                 . "ciniki_links.id = ciniki_link_tags.link_id "
-                . "AND ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
                 . ") "
-            . "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "HAVING ISNULL(ciniki_link_tags.tag_name) "
             . "ORDER BY name "
             . "";
@@ -86,9 +86,9 @@ function ciniki_links_linkList($ciniki) {
             . "FROM ciniki_link_tags "
             . "LEFT JOIN ciniki_links ON ("
                 . "ciniki_link_tags.link_id = ciniki_links.id "
-                . "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ") "
-            . "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_link_tags.tag_type = '" . ciniki_core_dbQuote($ciniki, $args['tag_type']) . "' "
             . "AND ciniki_link_tags.tag_name = '" . ciniki_core_dbQuote($ciniki, $args['tag_name']) . "' "
             . "ORDER BY name ";
@@ -109,7 +109,7 @@ function ciniki_links_linkList($ciniki) {
     $strsql = "SELECT id, name, "
         . "IF(ciniki_links.category='', 'Uncategorized', ciniki_links.category) AS sname, "
         . "url, description FROM ciniki_links "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY sname "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

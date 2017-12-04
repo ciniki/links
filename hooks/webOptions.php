@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // args:            The possible arguments for posts
 //
@@ -16,12 +16,12 @@
 // Returns
 // -------
 //
-function ciniki_links_hooks_webOptions(&$ciniki, $business_id, $args) {
+function ciniki_links_hooks_webOptions(&$ciniki, $tnid, $args) {
 
     //
     // Check to make sure the module is enabled
     //
-    if( !isset($ciniki['business']['modules']['ciniki.links']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.links']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.links.8', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
 
@@ -29,7 +29,7 @@ function ciniki_links_hooks_webOptions(&$ciniki, $business_id, $args) {
     // Get the settings from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'business_id', $business_id, 'ciniki.web', 'settings', 'page-links');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_web_settings', 'tnid', $tnid, 'ciniki.web', 'settings', 'page-links');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

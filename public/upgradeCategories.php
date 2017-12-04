@@ -22,11 +22,11 @@ function ciniki_links_upgradeCategories($ciniki) {
     //
     // Get all the existing tags, so we don't duplicate
     //
-    $strsql = "SELECT business_id, link_id, tag_name "
+    $strsql = "SELECT tnid, link_id, tag_name "
         . "FROM ciniki_link_tags "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.links', array(
-        array('container'=>'tags', 'fname'=>'business_id', 'fields'=>array()),
+        array('container'=>'tags', 'fname'=>'tnid', 'fields'=>array()),
         array('container'=>'links', 'fname'=>'link_id', 'fields'=>array()),
         array('container'=>'tags', 'fname'=>'tag_name', 'fields'=>array()),
         ));
@@ -42,7 +42,7 @@ function ciniki_links_upgradeCategories($ciniki) {
     //
     // Get the links
     //
-    $strsql = "SELECT id, business_id, category "
+    $strsql = "SELECT id, tnid, category "
         . "FROM ciniki_links "
         . "WHERE ciniki_links.category <> '' "
         . "";
@@ -53,8 +53,8 @@ function ciniki_links_upgradeCategories($ciniki) {
     $links = $rc['rows'];
     $count = 0;
     foreach($links as $row) {
-        if( !isset($tags[$row['business_id']]['links'][$row['id']]['tags'][$row['category']]) ) {
-            $rc = ciniki_core_objectAdd($ciniki, $row['business_id'], 'ciniki.links.tag', array(
+        if( !isset($tags[$row['tnid']]['links'][$row['id']]['tags'][$row['category']]) ) {
+            $rc = ciniki_core_objectAdd($ciniki, $row['tnid'], 'ciniki.links.tag', array(
                 'link_id'=>$row['id'],
                 'tag_type'=>10,
                 'tag_name'=>$row['category'],

@@ -9,7 +9,7 @@
 // Returns
 // -------
 //
-function ciniki_links_sync_objects($ciniki, &$sync, $business_id, $args) {
+function ciniki_links_sync_objects($ciniki, &$sync, $tnid, $args) {
     
     $objects = array();
     $objects['link'] = array(

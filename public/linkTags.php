@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the item from.
+// tnid:         The ID of the tenant to get the item from.
 // 
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_links_linkTags($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -28,10 +28,10 @@ function ciniki_links_linkTags($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'links', 'private', 'checkAccess');
-    $rc = ciniki_links_checkAccess($ciniki, $args['business_id'], 'ciniki.links.linkTags'); 
+    $rc = ciniki_links_checkAccess($ciniki, $args['tnid'], 'ciniki.links.linkTags'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -47,9 +47,9 @@ function ciniki_links_linkTags($ciniki) {
         . "FROM ciniki_link_tags "
         . "LEFT JOIN ciniki_links ON ("
             . "ciniki_link_tags.link_id = ciniki_links.id "
-            . "AND ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "GROUP BY ciniki_link_tags.tag_type, ciniki_link_tags.tag_name "
         . "ORDER BY ciniki_link_tags.tag_type, ciniki_link_tags.tag_name "
         . "";
@@ -77,15 +77,15 @@ function ciniki_links_linkTags($ciniki) {
     //
     // Check if there are any uncategorized links
     //
-    if( ($ciniki['business']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
+    if( ($ciniki['tenant']['modules']['ciniki.links']['flags']&0x01) > 0 ) {
         $strsql = "SELECT 'uncategorized' AS name, COUNT(ciniki_links.id) AS num_tags, "
             . "ciniki_link_tags.tag_name AS sname "
             . "FROM ciniki_links "
             . "LEFT JOIN ciniki_link_tags ON ("
                 . "ciniki_links.id = ciniki_link_tags.link_id "
-                . "AND ciniki_link_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_link_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . ") "
-            . "WHERE ciniki_links.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_links.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "GROUP BY ciniki_link_tags.tag_name "
             . "HAVING ISNULL(ciniki_link_tags.tag_name) "
             . "";

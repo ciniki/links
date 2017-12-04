@@ -126,7 +126,7 @@ function ciniki_links_main() {
         this.edit.fieldValue = function(s, i, d) { return this.data[i]; }
 //      this.edit.liveSearchCb = function(s, i, value) {
 //          if( i == 'category' ) {
-//              var rsp = M.api.getJSONBgCb('ciniki.links.linkSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+//              var rsp = M.api.getJSONBgCb('ciniki.links.linkSearchField', {'tnid':M.curTenantID, 'field':i, 'start_needle':value, 'limit':15},
 //                  function(rsp) {
 //                      M.ciniki_links_main.edit.liveSearchShow(s, i, M.gE(M.ciniki_links_main.edit.panelUID + '_' + i), rsp.results);
 //                  });
@@ -147,7 +147,7 @@ function ciniki_links_main() {
 //          this.removeLiveSearch(s, lid);
 //      };
         this.edit.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.links.linkHistory', 'args':{'business_id':M.curBusinessID, 'link_id':this.link_id, 'field':i}};
+            return {'method':'ciniki.links.linkHistory', 'args':{'tnid':M.curTenantID, 'link_id':this.link_id, 'field':i}};
         }
         this.edit.addButton('save', 'Save', 'M.ciniki_links_main.saveLink();');
         this.edit.addClose('Cancel');
@@ -174,35 +174,35 @@ function ciniki_links_main() {
             return false;
         } 
 
-        if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 ) {
+        if( (M.curTenant.modules['ciniki.links'].flags&0x01) > 0 ) {
             this.edit.sections._categories.active = 'yes';
 //          this.edit.sections.general.fields.category.active = 'no';
         } else {
             this.edit.sections._categories.active = 'no';
 //          this.edit.sections.general.fields.category.active = 'yes';
         }
-        if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 ) {
+        if( (M.curTenant.modules['ciniki.links'].flags&0x02) > 0 ) {
             this.edit.sections._tags.active = 'yes';
         } else {
             this.edit.sections._tags.active = 'no';
         }
-        if( (M.curBusiness.modules['ciniki.links'].flags&0x10) > 0 ) {
+        if( (M.curTenant.modules['ciniki.links'].flags&0x10) > 0 ) {
             this.edit.sections._notes.active = 'yes';
         } else {
             this.edit.sections._notes.active = 'no';
         }
         
-        if( (M.curBusiness.modules['ciniki.links'].flags&0x03) == 0x03 ) {
+        if( (M.curTenant.modules['ciniki.links'].flags&0x03) == 0x03 ) {
             this.tags.sections.tags.label = '';
             this.tags.sections.categories.label = '';
             this.tags.sections.types.visible = 'yes';
             this.showTags(cb, 10);
-        } else if( (M.curBusiness.modules['ciniki.links'].flags&0x01) == 0x01 ) {
+        } else if( (M.curTenant.modules['ciniki.links'].flags&0x01) == 0x01 ) {
             this.tags.sections.categories.label = 'Categories';
             this.tags.sections.tags.label = 'Tags';
             this.tags.sections.types.visible = 'no';
             this.showTags(cb, 10);
-        } else if( (M.curBusiness.modules['ciniki.links'].flags&0x02) == 0x02 ) {
+        } else if( (M.curTenant.modules['ciniki.links'].flags&0x02) == 0x02 ) {
             this.tags.sections.categories.label = 'Categories';
             this.tags.sections.tags.label = 'Tags';
             this.tags.sections.types.visible = 'no';
@@ -217,7 +217,7 @@ function ciniki_links_main() {
         //
         // Grab the list of sites
         //
-        var rsp = M.api.getJSONCb('ciniki.links.linkList', {'business_id':M.curBusinessID}, function(rsp) {
+        var rsp = M.api.getJSONCb('ciniki.links.linkList', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -241,7 +241,7 @@ function ciniki_links_main() {
                         'addFn':'M.ciniki_links_main.showEdit(\'M.ciniki_links_main.showMenu();\',0,0,\'' + rsp.sections[i].section.sname + '\');',
                         'noData':'No links added',
                         };
-                    if( (M.curBusiness.modules['ciniki.links'].flags&0x01) == 0 ) {
+                    if( (M.curTenant.modules['ciniki.links'].flags&0x01) == 0 ) {
                         p.sections[rsp.sections[i].section.sname].label = 'Links';
                     }
                 }
@@ -273,7 +273,7 @@ function ciniki_links_main() {
             this.tags.sections.tags.visible = 'yes';
             this.tags.sections.types.selected = 'tags';
         }
-        M.api.getJSONCb('ciniki.links.linkTags', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.links.linkTags', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -310,7 +310,7 @@ function ciniki_links_main() {
         if( n != null ) { this.list.tag_name = unescape(n); }
         this.list.sections.links.label = this.list.tag_name;
         M.api.getJSONCb('ciniki.links.linkList', 
-            {'business_id':M.curBusinessID, 
+            {'tnid':M.curTenantID, 
                 'tag_type':this.list.tag_type, 'tag_name':encodeURIComponent(this.list.tag_name)}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -329,7 +329,7 @@ function ciniki_links_main() {
         if( lid != null ) { this.edit.link_id = lid; }
         this.edit.sections._buttons.buttons.delete.visible = (this.edit.link_id>0?'yes':'no');
         M.api.getJSONCb('ciniki.links.linkGet', 
-            {'business_id':M.curBusinessID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
+            {'tnid':M.curTenantID, 'link_id':this.edit.link_id, 'tags':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -345,7 +345,7 @@ function ciniki_links_main() {
                         }
                     }
                 }
-                if( (M.curBusiness.modules['ciniki.links'].flags&0x01) > 0 && rsp.categories != null ) {
+                if( (M.curTenant.modules['ciniki.links'].flags&0x01) > 0 && rsp.categories != null ) {
                     var tags = [];
                     for(i in rsp.categories) {
                         tags.push(rsp.categories[i].tag.name);
@@ -354,7 +354,7 @@ function ciniki_links_main() {
                 } else {
                     p.sections._categories.fields.categories.tags = [];
                 }
-                if( (M.curBusiness.modules['ciniki.links'].flags&0x02) > 0 && rsp.tags != null ) {
+                if( (M.curTenant.modules['ciniki.links'].flags&0x02) > 0 && rsp.tags != null ) {
                     var tags = [];
                     for(i in rsp.tags) {
                         tags.push(rsp.tags[i].tag.name);
@@ -373,7 +373,7 @@ function ciniki_links_main() {
             var c = this.edit.serializeForm('no');
             if( c != '' ) {
                 var rsp = M.api.postJSONCb('ciniki.links.linkUpdate', 
-                    {'business_id':M.curBusinessID, 'link_id':this.edit.link_id}, c, function(rsp) {
+                    {'tnid':M.curTenantID, 'link_id':this.edit.link_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -386,7 +386,7 @@ function ciniki_links_main() {
         } else {
             var c = this.edit.serializeForm('yes');
             var rsp = M.api.postJSONCb('ciniki.links.linkAdd', 
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -399,7 +399,7 @@ function ciniki_links_main() {
     this.deleteLink = function() {
         if( confirm("Are you sure you want to remove '" + this.edit.data.name + "' as an link ?") ) {
             var rsp = M.api.getJSONCb('ciniki.links.linkDelete', 
-                {'business_id':M.curBusinessID, 'link_id':M.ciniki_links_main.edit.link_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'link_id':M.ciniki_links_main.edit.link_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
