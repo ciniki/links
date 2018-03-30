@@ -24,8 +24,10 @@ function ciniki_links_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         'title'=>$args['page_title'],
         'breadcrumbs'=>$args['breadcrumbs'],
         'blocks'=>array(),
-        'submenu'=>array(),
         );
+    if( !isset($args['breadcrumbs']) || count($args['breadcrumbs']) <= 1 ) {
+        $page['submenu'] = array();
+    }
 
     $tag_type = 0;
     $tag_permalink = '';
@@ -234,13 +236,12 @@ function ciniki_links_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     }
 
     
-    $page['submenu'] = array();
-    if( isset($ciniki['tenant']['modules']['ciniki.links']['flags']) && ($ciniki['tenant']['modules']['ciniki.links']['flags']&0x03) == 0x03 ) {
+    if( isset($page['submenu']) && ciniki_core_checkModuleFlags($ciniki, 'ciniki.links', 0x03) ) {
+        $page['submenu'] = array();
         // Display the category/tags buttons
         $page['submenu']['categories'] = array('name'=>'Categories', 'url'=>$ciniki['request']['base_url'] . '/links/categories');
         $page['submenu']['tags'] = array('name'=>'Tags', 'url'=>$ciniki['request']['base_url'] . '/links/tags');
     } 
-
 
     return array('stat'=>'ok', 'page'=>$page);
 }
