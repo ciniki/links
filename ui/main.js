@@ -170,7 +170,7 @@ function ciniki_links_main() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_links_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -397,7 +397,7 @@ function ciniki_links_main() {
     };
 
     this.deleteLink = function() {
-        if( confirm("Are you sure you want to remove '" + this.edit.data.name + "' as an link ?") ) {
+        M.confirm("Are you sure you want to remove '" + this.edit.data.name + "' as an link ?",null,function() {
             var rsp = M.api.getJSONCb('ciniki.links.linkDelete', 
                 {'tnid':M.curTenantID, 'link_id':M.ciniki_links_main.edit.link_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -406,6 +406,6 @@ function ciniki_links_main() {
                     }
                     M.ciniki_links_main.edit.close();
                 });
-        }
+        });
     };
 }
