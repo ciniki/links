@@ -23,6 +23,7 @@ function ciniki_links_web_processRequest(&$ciniki, $settings, $tnid, $args) {
     $page = array(
         'title'=>$args['page_title'],
         'breadcrumbs'=>$args['breadcrumbs'],
+        'article-class'=>'ciniki-links',
         'blocks'=>array(),
         );
     if( !isset($args['breadcrumbs']) || count($args['breadcrumbs']) <= 1 ) {
