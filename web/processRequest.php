@@ -232,7 +232,7 @@ function ciniki_links_web_processRequest(&$ciniki, $settings, $tnid, $args) {
         if( count($sections) > 0 ) {
             $page['blocks'][] = array('type'=>'cilist', 'categories'=>$sections);
         } else {
-            $page['blocks'][] = array('type'=>'content', 'content'=>"I'm sorry, there are no links.");
+            $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'content'=>"I'm sorry, there are no links.");
         }
     }
 
