@@ -49,7 +49,7 @@ function ciniki_links_linkSearchField($ciniki) {
             . "AND " . $args['field'] . " <> '' "
             . ") "
         . "";
-    $strsql .= "ORDER BY " . $args['field'] . " COLLATE latin1_general_cs "
+    $strsql .= "ORDER BY " . $args['field'] . " "
         . "";
     if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";
